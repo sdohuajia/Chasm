@@ -85,6 +85,10 @@ EOF
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
+    # 切换到 scout 目录
+    cd scout || exit 1  # 如果切换失败则退出脚本
+
+    # 加载环境变量
     source ./.env
 
     # 使用 curl 发送 POST 请求到 webhook
@@ -94,6 +98,7 @@ function send_webhook_request() {
          -d '{"body":"{\"model\":\"gemma2-9b-it\",\"messages\":[{\"role\":\"system\",\"content\":\"You are a helpful assistant.\"}]}"}' \
          "$WEBHOOK_URL"
 }
+
 
 # 主菜单
 function main_menu() {
