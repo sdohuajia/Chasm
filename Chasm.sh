@@ -88,6 +88,7 @@ function send_webhook_request() {
     source ./.env
 
     # 使用 curl 发送 POST 请求到 webhook
+    cd scout
     curl -X POST \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $WEBHOOK_API_KEY" \
