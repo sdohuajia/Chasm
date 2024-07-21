@@ -27,26 +27,26 @@ function install_node() {
 
     # 使用 tee 命令将内容写入 .env 文件
     tee .env > /dev/null <<EOF
-    PORT=3001
-    LOGGER_LEVEL=debug
-    
-    # Chasm
-    ORCHESTRATOR_URL=https://orchestrator.chasm.net
-    SCOUT_NAME=myscout
-    SCOUT_UID=$SCOUT_UID
-    WEBHOOK_API_KEY=$WEBHOOK_API_KEY
-    # Scout Webhook Url, update based on your server's IP and Port
-    # e.g. http://123.123.123.123:3001/
-    WEBHOOK_URL=$WEBHOOK_URL
+PORT=3001
+LOGGER_LEVEL=debug
 
-    # Chosen Provider (groq, openai)
-    PROVIDERS=groq
-    MODEL=gemma2-9b-it
-    GROQ_API_KEY=$GROQ_API_KEY
+# Chasm
+ORCHESTRATOR_URL=https://orchestrator.chasm.net
+SCOUT_NAME=myscout
+SCOUT_UID=$SCOUT_UID
+WEBHOOK_API_KEY=$WEBHOOK_API_KEY
+# Scout Webhook Url, update based on your server's IP and Port
+# e.g. http://123.123.123.123:3001/
+WEBHOOK_URL=$WEBHOOK_URL
 
-    # Optional
-    OPENROUTER_API_KEY=$OPENROUTER_API_KEY
-    OPENAI_API_KEY=$OPENAI_API_KEY
+# Chosen Provider (groq, openai)
+PROVIDERS=groq
+MODEL=gemma2-9b-it
+GROQ_API_KEY=$GROQ_API_KEY
+
+# Optional
+OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+OPENAI_API_KEY=$OPENAI_API_KEY
 EOF
 
     # 输出 .env 文件内容，用于验证
