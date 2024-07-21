@@ -53,7 +53,7 @@ EOF
     cat .env
 
     # 提示用户是否退出脚本
-    echo "是否退出？ (yes/no)"
+    echo "是否退出？选择no继续(yes/no)"
     read answer
 
     if [ "$answer" != "no" ]; then
