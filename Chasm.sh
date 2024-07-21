@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# 询问用户输入 SCOUT_UID 和 WEBHOOK_API_KEY
+echo "请输入 SCOUT_UID："
+read SCOUT_UID
+
+echo "请输入 WEBHOOK_API_KEY："
+read WEBHOOK_API_KEY
+
+echo "请输入 GROQ_API_KEY："
+read GROQ_API_KEY
+
 # 定义安装节点的函数
 function install_node() {
     # 检查是否已安装 Docker
