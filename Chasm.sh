@@ -29,10 +29,7 @@ function install_node() {
     tee .env > /dev/null <<EOF
     PORT=3001
     LOGGER_LEVEL=debug
-
-    # 其他环境变量和注释
-    EOF
-
+    
     # Chasm
     ORCHESTRATOR_URL=https://orchestrator.chasm.net
     SCOUT_NAME=myscout
@@ -50,7 +47,7 @@ function install_node() {
     # Optional
     OPENROUTER_API_KEY=$OPENROUTER_API_KEY
     OPENAI_API_KEY=$OPENAI_API_KEY
-    EOF
+EOF
 
     # 输出 .env 文件内容，用于验证
     cat .env
