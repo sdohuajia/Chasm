@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 询问用户输入 SCOUT_UID 和 WEBHOOK_API_KEY
+# 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
 echo "请输入 SCOUT_UID："
 read SCOUT_UID
 
@@ -30,10 +30,14 @@ function install_node() {
     # 输出 webhook URL
     echo "Webhook URL: $WEBHOOK_URL"
 
-    # 切换到用户的主目录并创建 scout 目录
-    cd ~ || exit 1  # 如果切换失败则退出脚本
-    mkdir -p scout
-    cd scout || exit 1  # 如果切换失败则退出脚本
+    # 创建 scout 目录（如果不存在）
+    mkdir -p ~/scout
+
+    # 切换到 scout 目录
+    cd ~/scout || {
+        echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
+        exit 1
+    }
 
     # 使用 tee 命令将内容写入 .env 文件
     tee .env > /dev/null <<EOF
@@ -64,10 +68,10 @@ EOF
     cat .env
 
     # 提示用户是否退出脚本
-    echo "是否退出？填写no下一步 (yes/no)"
+    echo "是否退出？填写no可下一步 (yes/no)"
     read answer
 
-    if [ "$answer" != "yes" ]; then
+    if [ "$answer" != "no" ]; then
         echo "查看完毕，退出脚本。"
         exit 1
     fi
@@ -95,20 +99,19 @@ EOF
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
-    # 切换到 scout 目录
-    cd scout || exit 1  # 如果切换失败则退出脚本
-
-    # 加载环境变量
     source ./.env
 
     # 使用 curl 发送 POST 请求到 webhook
+    cd ~/scout || {
+        echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
+        exit 1
+    }
     curl -X POST \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $WEBHOOK_API_KEY" \
          -d '{"body":"{\"model\":\"gemma2-9b-it\",\"messages\":[{\"role\":\"system\",\"content\":\"You are a helpful assistant.\"}]}"}' \
          "$WEBHOOK_URL"
 }
-
 
 # 主菜单
 function main_menu() {
@@ -123,7 +126,7 @@ function main_menu() {
         echo "退出脚本，请按键盘ctrl c退出即可"
         echo "请选择要执行的操作:"
         echo "1. 安装节点"
-        echo "2. 测试LLM"
+        echo "2. 发送 Webhook 请求"
         read -p "请输入选项（1-2）: " OPTION
 
         case $OPTION in
