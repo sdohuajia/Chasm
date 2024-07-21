@@ -30,6 +30,9 @@ function install_node() {
     PORT=3001
     LOGGER_LEVEL=debug
 
+    # 其他环境变量和注释
+    EOF
+
     # Chasm
     ORCHESTRATOR_URL=https://orchestrator.chasm.net
     SCOUT_NAME=myscout
