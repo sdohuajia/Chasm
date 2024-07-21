@@ -1,6 +1,7 @@
 安装教程：铸造NFT以获取SCOUT_UID 和 WEBHOOK_API_KEY，你的钱包中需要有0.1个Mantle链的MNT作为GAS
 
-打开https://scout.chasm.net/private-mint，点击_mint(scout)
+打开https://scout.chasm.net/private-mint
+点击_mint(scout)
 
 点击Setup my scouts，复制这里的内容粘贴到服务器上
 
