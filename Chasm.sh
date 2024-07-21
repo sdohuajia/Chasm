@@ -50,6 +50,7 @@ function install_node() {
 EOF
 
     # 输出 .env 文件内容，用于验证
+    echo "Contents of .env file:"
     cat .env
 
     # 提示用户是否退出脚本
@@ -60,6 +61,11 @@ EOF
         echo "查看完毕，退出脚本。"
         exit 1
     fi
+
+    # 设置防火墙规则允许端口 3001
+    echo "设置防火墙规则允许端口 3001..."
+    sudo ufw allow 3001
+    sudo ufw allow 3001/tcp
 
     # 拉取 Docker 镜像并运行
     if docker pull johnsonchasm/chasm-scout; then
@@ -86,7 +92,7 @@ function send_webhook_request() {
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $WEBHOOK_API_KEY" \
          -d '{"body":"{\"model\":\"gemma2-9b-it\",\"messages\":[{\"role\":\"system\",\"content\":\"You are a helpful assistant.\"}]}"}' \
-         $WEBHOOK_URL
+         "$WEBHOOK_URL"
 }
 
 # 主菜单
