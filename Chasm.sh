@@ -64,10 +64,10 @@ EOF
     cat .env
 
     # 提示用户是否退出脚本
-    echo "是否退出？ (yes/no)"
+    echo "是否退出？填写no下一步 (yes/no)"
     read answer
 
-    if [ "$answer" != "no" ]; then
+    if [ "$answer" != "yes" ]; then
         echo "查看完毕，退出脚本。"
         exit 1
     fi
