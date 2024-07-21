@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
-echo "请输入 SCOUT_UID："
+echo "请输入 SCOUT_UID：(第一次填写后可不填)"
 read SCOUT_UID
 
-echo "请输入 WEBHOOK_API_KEY："
+echo "请输入 WEBHOOK_API_KEY：(第一次填写后可不填)"
 read WEBHOOK_API_KEY
 
-echo "请输入 GROQ_API_KEY："
+echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
 read GROQ_API_KEY
 
 # 定义安装节点的函数
