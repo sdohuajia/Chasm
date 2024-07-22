@@ -11,7 +11,7 @@ echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
 read GROQ_API_KEY
 
 # 定义安装节点的函数
-function install_node() {
+    function install_node() {
     # 检查是否已安装 Docker
     if ! command -v docker &> /dev/null; then
         echo "安装 Docker..."
@@ -24,11 +24,9 @@ function install_node() {
     # 获取当前系统的公网 IP 地址
     ip=$(curl -s4 ifconfig.me/ip)
 
-    # 构建 webhook 的 URL
-    WEBHOOK_URL="http://$ip:3001/"
-
-    # 输出 webhook URL
-    echo "Webhook URL: $WEBHOOK_URL"
+    # 提示用户输入端口号
+    read -p "请输入端口号（默认为3001）：" PORT
+    PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
 
     # 创建 scout 目录（如果不存在）
     mkdir -p ~/scout
@@ -41,7 +39,7 @@ function install_node() {
 
     # 使用 tee 命令将内容写入 .env 文件
     tee .env > /dev/null <<EOF
-    PORT=3001
+    PORT=$PORT
     LOGGER_LEVEL=debug
     
     # Chasm
@@ -51,7 +49,7 @@ function install_node() {
     WEBHOOK_API_KEY=$WEBHOOK_API_KEY
     # Scout Webhook Url, update based on your server's IP and Port
     # e.g. http://123.123.123.123:3001/
-    WEBHOOK_URL=$WEBHOOK_URL
+    WEBHOOK_URL=http://$ip:$PORT/
 
     # Chosen Provider (groq, openai)
     PROVIDERS=groq
@@ -76,14 +74,14 @@ EOF
         exit 1
     fi
 
-    # 设置防火墙规则允许端口 3001
-    echo "设置防火墙规则允许端口 3001..."
-    sudo ufw allow 3001
-    sudo ufw allow 3001/tcp
+    # 设置防火墙规则允许新输入的端口号
+    echo "设置防火墙规则允许端口 $PORT..."
+    sudo ufw allow $PORT
+    sudo ufw allow $PORT/tcp
 
     # 拉取 Docker 镜像并运行
     if docker pull johnsonchasm/chasm-scout; then
-        docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout
     else
         echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
         exit 1
@@ -96,6 +94,7 @@ EOF
     echo "请求已发送，退出脚本。"
     exit 0
 }
+
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
@@ -151,7 +150,7 @@ function main_menu() {
         echo "1. 安装节点"
         echo "2. 测试LLM"
         echo "3. 重启节点"
-        read -p "请输入选项（1-2）: " OPTION
+        read -p "请输入选项（1-3）: " OPTION
 
         case $OPTION in
         1) install_node ;;
