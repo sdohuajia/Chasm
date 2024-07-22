@@ -113,6 +113,29 @@ function send_webhook_request() {
          "$WEBHOOK_URL"
 }
 
+# 重启节点函数
+function restart_node() {
+    # 切换到 scout 目录
+    cd ~/scout || {
+        echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
+        exit 1
+    }
+
+    # 停止和删除旧的 Docker 容器
+    echo "停止和删除旧的 Docker 容器..."
+    docker stop scout
+    docker rm scout
+
+    # 拉取 Docker 镜像并重新运行
+    if docker pull johnsonchasm/chasm-scout; then
+        docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout
+        echo "节点已成功重启。"
+    else
+        echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
+        exit 1
+    fi
+}
+
 # 主菜单
 function main_menu() {
     while true; do
@@ -127,11 +150,13 @@ function main_menu() {
         echo "请选择要执行的操作:"
         echo "1. 安装节点"
         echo "2. 测试LLM"
+        echo "3. 重启节点"
         read -p "请输入选项（1-2）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
+        3) restart_node ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
         echo "按任意键返回主菜单..."
