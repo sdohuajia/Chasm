@@ -126,7 +126,7 @@ function main_menu() {
         echo "退出脚本，请按键盘ctrl c退出即可"
         echo "请选择要执行的操作:"
         echo "1. 安装节点"
-        echo "2. 发送 Webhook 请求"
+        echo "2. 测试LLM"
         read -p "请输入选项（1-2）: " OPTION
 
         case $OPTION in
