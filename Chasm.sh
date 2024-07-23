@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
-echo "请输入 SCOUT_UID：(第一次填写后可不填)"
-read SCOUT_UID
-
-echo "请输入 WEBHOOK_API_KEY：(第一次填写后可不填)"
-read WEBHOOK_API_KEY
-
-echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
-read GROQ_API_KEY
-
 # 定义安装节点的函数
-    function install_node() {
+function install_node() {
+    # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
+    echo "请输入 SCOUT_UID：(第一次填写后可不填，多开的继续填写)"
+    read SCOUT_UID
+
+    echo "请输入 WEBHOOK_API_KEY：(第一次填写后可不填)"
+    read WEBHOOK_API_KEY
+
+    echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
+    read GROQ_API_KEY
+
     # 检查是否已安装 Docker
     if ! command -v docker &> /dev/null; then
         echo "安装 Docker..."
@@ -48,7 +48,7 @@ read GROQ_API_KEY
     SCOUT_UID=$SCOUT_UID
     WEBHOOK_API_KEY=$WEBHOOK_API_KEY
     # Scout Webhook Url, update based on your server's IP and Port
-    # e.g. http://123.123.123.123:3001/
+    # e.g. http://$ip:$PORT/
     WEBHOOK_URL=http://$ip:$PORT/
 
     # Chosen Provider (groq, openai)
@@ -91,10 +91,8 @@ EOF
     source ./.env
 
     # 输出消息
-    echo "请求已发送，退出脚本。"
-    exit 0
+    echo "节点安装完成。"
 }
-
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
