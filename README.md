@@ -16,8 +16,6 @@ GROQ_API_KEY=你得到的APIKEY
 
 
 执行脚本 
-国际版：wget -O Chasm.sh https://raw.githubusercontent.com/sdohuajia/123/main/Chasm.sh && chmod +x Chasm.sh && ./Chasm.sh
-
-国内版：wget https://raw.githubusercontent.com/sdohuajia/123/main/Chasm%E5%9B%BD%E5%86%85%E7%89%88.sh && chmod +x Chasm国内版.sh && ./Chasm国内版.sh
+wget -O Chasm.sh https://raw.githubusercontent.com/sdohuajia/123/main/Chasm.sh && chmod +x Chasm.sh && ./Chasm.sh
 
 照脚本的提示操作：包括安装 Docker、设置环境变量、拉取 Docker 镜像等步骤
