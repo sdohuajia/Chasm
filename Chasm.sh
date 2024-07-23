@@ -99,13 +99,15 @@ EOF
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
-    source ./.env
-
-    # 使用 curl 发送 POST 请求到 webhook
+    # 切换到 scout 目录
     cd ~/scout || {
         echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
         exit 1
     }
+
+    source ./.env
+
+    # 使用 curl 发送 POST 请求到 webhook
     curl -X POST \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $WEBHOOK_API_KEY" \
@@ -208,6 +210,8 @@ EOF
         echo "节点 node$i 安装完成。"
         cd ~/scout  # 返回到 scout 目录，确保下一个节点创建在正确的目录下
     done
+
+    echo "所有节点安装完成。"
 }
 
 # 主菜单
