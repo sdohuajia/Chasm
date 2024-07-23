@@ -113,6 +113,12 @@ function send_webhook_request() {
          "$WEBHOOK_URL"
 }
 
+# 查看 scout 日志函数
+function view_scout_logs() {
+    echo "查看 scout 容器日志..."
+    docker logs scout -f --tail 100
+}
+
 # 重启节点函数
 function restart_node() {
     # 切换到 scout 目录
@@ -150,13 +156,15 @@ function main_menu() {
         echo "请选择要执行的操作:"
         echo "1. 安装节点"
         echo "2. 测试LLM"
-        echo "3. 重启节点"
-        read -p "请输入选项（1-3）: " OPTION
+        echo "3. 查看 Scout 日志"
+        echo "4. 重启节点"
+        read -p "请输入选项（1-4）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
-        3) restart_node ;;
+        3) view_scout_logs ;;
+        4) restart_node ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
         echo "按任意键返回主菜单..."
