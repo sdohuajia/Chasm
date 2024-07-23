@@ -15,7 +15,7 @@ fi
 # 定义安装节点的函数
 function install_node() {
     # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
-    echo "请输入 SCOUT_UID：(第一次填写后可不填，多开的继续填写)"
+    echo "请输入 SCOUT_UID：(第一次填写后可不填)"
     read SCOUT_UID
 
     echo "请输入 WEBHOOK_API_KEY：(第一次填写后可不填)"
@@ -115,10 +115,10 @@ function send_webhook_request() {
          "$WEBHOOK_URL"
 }
 
-# 查看 scout 日志函数
-function view_scout_logs() {
-    echo "查看 scout 容器日志..."
-    docker logs scout -f --tail 100
+# 测试服务器响应
+test_server_response() {
+    echo "测试服务器响应..."
+    curl localhost:3001
 }
 
 # 重启节点函数
@@ -227,18 +227,20 @@ function main_menu() {
         echo "退出脚本，请按键盘ctrl c退出即可"
         echo "请选择要执行的操作:"
         echo "1. 安装节点"
-        echo "2. 测试LLM"
-        echo "3. 查看 Scout 日志"
-        echo "4. 重启节点"
-        echo "5. 多开节点（谨慎使用）"
-        read -p "请输入选项（1-5）: " OPTION
+        echo "2. 发送 Webhook 请求"
+        echo "3. 测试服务器响应"
+        echo "4. 查看 Scout 日志"
+        echo "5. 重启节点"
+        echo "6. 多开节点（谨慎使用）"
+        read -p "请输入选项（1-6）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
-        3) view_scout_logs ;;
-        4) restart_node ;;
-        5) install_multiple_nodes ;;
+        3) test_server_response ;;
+        4) view_scout_logs ;;
+        5) restart_node ;;
+        6) install_multiple_nodes ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
         echo "按任意键返回主菜单..."
