@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# 系统更新和 Docker 安装
+echo "正在更新系统..."
+sudo apt-get update
+
+# 检查是否已安装 Docker
+if ! command -v docker &> /dev/null; then
+    echo "正在安装 Docker..."
+    sudo apt-get install docker.io
+else
+    echo "Docker 已安装，跳过安装步骤。"
+fi
+
 # 定义安装节点的函数
 function install_node() {
     # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
@@ -11,15 +23,6 @@ function install_node() {
 
     echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
     read GROQ_API_KEY
-
-    # 检查是否已安装 Docker
-    if ! command -v docker &> /dev/null; then
-        echo "安装 Docker..."
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
-    else
-        echo "Docker 已安装，跳过安装步骤。"
-    fi
 
     # 获取当前系统的公网 IP 地址
     ip=$(curl -s4 ifconfig.me/ip)
