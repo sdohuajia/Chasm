@@ -157,8 +157,8 @@ function install_multiple_nodes() {
 
     ip=$(curl -s4 ifconfig.me/ip)
 
-    read -p "请输入起始端口号（默认为3001）：" START_PORT
-    START_PORT=${START_PORT:-3001}
+    read -p "请输入起始端口号（默认为3002）：" START_PORT
+    START_PORT=${START_PORT:-3002}
 
     read -p "请输入要安装的节点数量（默认为1）：" NODE_COUNT
     NODE_COUNT=${NODE_COUNT:-1}
