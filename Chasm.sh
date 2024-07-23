@@ -42,26 +42,26 @@ function install_node() {
 
     # 使用 tee 命令将内容写入 .env 文件
     tee .env > /dev/null <<EOF
-    PORT=$PORT
-    LOGGER_LEVEL=debug
-    
-    # Chasm
-    ORCHESTRATOR_URL=https://orchestrator.chasm.net
-    SCOUT_NAME=myscout
-    SCOUT_UID=$SCOUT_UID
-    WEBHOOK_API_KEY=$WEBHOOK_API_KEY
-    # Scout Webhook Url, update based on your server's IP and Port
-    # e.g. http://$ip:$PORT/
-    WEBHOOK_URL=http://$ip:$PORT/
+PORT=$PORT
+LOGGER_LEVEL=debug
 
-    # Chosen Provider (groq, openai)
-    PROVIDERS=groq
-    MODEL=gemma2-9b-it
-    GROQ_API_KEY=$GROQ_API_KEY
+# Chasm
+ORCHESTRATOR_URL=https://orchestrator.chasm.net
+SCOUT_NAME=myscout
+SCOUT_UID=$SCOUT_UID
+WEBHOOK_API_KEY=$WEBHOOK_API_KEY
+# Scout Webhook Url, update based on your server's IP and Port
+# e.g. http://$ip:$PORT/
+WEBHOOK_URL=http://$ip:$PORT/
 
-    # Optional
-    OPENROUTER_API_KEY=$OPENROUTER_API_KEY
-    OPENAI_API_KEY=$OPENAI_API_KEY
+# Chosen Provider (groq, openai)
+PROVIDERS=groq
+MODEL=gemma2-9b-it
+GROQ_API_KEY=$GROQ_API_KEY
+
+# Optional
+OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+OPENAI_API_KEY=$OPENAI_API_KEY
 EOF
 
     # 输出 .env 文件内容，用于验证
@@ -142,6 +142,74 @@ function restart_node() {
     fi
 }
 
+# 安装多个节点函数
+function install_multiple_nodes() {
+    echo "多开节点（谨慎使用）"
+
+    echo "请输入 SCOUT_UID：(第一次填写后可不填，多开的继续填写)"
+    read SCOUT_UID
+
+    echo "请输入 WEBHOOK_API_KEY：(第一次填写后可不填)"
+    read WEBHOOK_API_KEY
+
+    echo "请输入 GROQ_API_KEY：(第一次填写后可不填)"
+    read GROQ_API_KEY
+
+    ip=$(curl -s4 ifconfig.me/ip)
+
+    read -p "请输入起始端口号（默认为3001）：" START_PORT
+    START_PORT=${START_PORT:-3001}
+
+    read -p "请输入要安装的节点数量（默认为1）：" NODE_COUNT
+    NODE_COUNT=${NODE_COUNT:-1}
+
+    for ((i = 1; i <= NODE_COUNT; i++)); do
+        PORT=$((START_PORT + i - 1))
+        NODE_DIR=~/scout/node$i
+
+        mkdir -p $NODE_DIR
+        cd $NODE_DIR || {
+            echo "切换到 $NODE_DIR 目录失败。请检查目录是否存在或权限设置。"
+            exit 1
+        }
+
+        tee .env > /dev/null <<EOF
+PORT=$PORT
+LOGGER_LEVEL=debug
+
+# Chasm
+ORCHESTRATOR_URL=https://orchestrator.chasm.net
+SCOUT_NAME=myscout
+SCOUT_UID=$SCOUT_UID
+WEBHOOK_API_KEY=$WEBHOOK_API_KEY
+# Scout Webhook Url, update based on your server's IP and Port
+# e.g. http://$ip:$PORT/
+WEBHOOK_URL=http://$ip:$PORT/
+
+# Chosen Provider (groq, openai)
+PROVIDERS=groq
+MODEL=gemma2-9b-it
+GROQ_API_KEY=$GROQ_API_KEY
+EOF
+
+        echo "Contents of .env file for node$i:"
+        cat .env
+
+        sudo ufw allow $PORT
+        sudo ufw allow $PORT/tcp
+
+        if docker pull johnsonchasm/chasm-scout; then
+            docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout_node$i johnsonchasm/chasm-scout
+        else
+            echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
+            exit 1
+        fi
+
+        echo "节点 node$i 安装完成。"
+        cd ~/scout  # 返回到 scout 目录，确保下一个节点创建在正确的目录下
+    done
+}
+
 # 主菜单
 function main_menu() {
     while true; do
@@ -158,13 +226,15 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        read -p "请输入选项（1-4）: " OPTION
+        echo "5. 多开节点（谨慎使用）"
+        read -p "请输入选项（1-5）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
         3) view_scout_logs ;;
         4) restart_node ;;
+        5) install_multiple_nodes ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
         echo "按任意键返回主菜单..."
