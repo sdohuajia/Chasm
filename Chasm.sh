@@ -237,36 +237,37 @@ function update_script() {
 
 function main_menu() {
     while true; do
-        clear
-        echo "脚本由大赌社区哈哈哈哈编写，推特 @ferdie_jhovie，免费开源，请勿相信收费"
-        echo "特别鸣谢 Silent ⚛| validator"
-        echo "================================================================"
-        echo "节点社区 Telegram 群组:https://t.me/niuwuriji"
-        echo "节点社区 Telegram 频道:https://t.me/niuwuriji"
-        echo "节点社区 Discord 社群:https://discord.gg/GbMV5EcNWF"
-        echo "退出脚本，请按键盘ctrl c退出即可"
-        echo "请选择要执行的操作:"
-        echo "1. 安装节点"
-        echo "2. 发送 Webhook 请求"
-        echo "3. 测试服务器响应"
-        echo "4. 查看 Scout 日志"
-        echo "5. 重启节点"
-        echo "6. 多开节点（谨慎使用）"
-        echo "7. 脚本更新"
-        read -p "请输入选项（1-7）: " OPTION
+    clear
+    echo "脚本由大赌社区哈哈哈哈编写，推特 @ferdie_jhovie，免费开源，请勿相信收费"
+    echo "特别鸣谢 Silent ⚛| validator"
+    echo "================================================================"
+    echo "节点社区 Telegram 群组:https://t.me/niuwuriji"
+    echo "节点社区 Telegram 频道:https://t.me/niuwuriji"
+    echo "节点社区 Discord 社群:https://discord.gg/GbMV5EcNWF"
+    echo "退出脚本，请按键盘ctrl c退出即可"
+    echo "请选择要执行的操作:"
+    echo "1. 安装节点"
+    echo "2. 测试LLM"
+    echo "3. 测试服务器响应"
+    echo "4. 查看 Scout 日志"
+    echo "5. 重启节点"
+    echo "6. 多开节点（谨慎使用）"
+    echo "7. 脚本更新"
+    read -p "请输入选项（1-7）: " OPTION
 
-        case $OPTION in
-            1) install_node ;;
-            2) send_webhook_request ;;
-            3) test_server_response ;;
-            4) view_scout_logs ;;
-            5) restart_node ;;
-            6) install_multiple_nodes ;;
-            7) update_script ;;
-            *) echo "无效选项，请重新输入。" ;;
-        esac
-        echo "按任意键返回主菜单..."
-        read -n 1
-    done
-}
+    case $OPTION in
+        1) install_node ;;
+        2) send_webhook_request ;;
+        3) test_server_response ;;
+        4) view_scout_logs ;;
+        5) restart_node ;;
+        6) install_multiple_nodes ;;
+        7) update_script ;;
+        *) echo "无效选项，请重新输入。" ;;
+    esac
+    echo "按任意键返回主菜单..."
+    read -n 1
+done
 
+# 调用主菜单函数，开始执行主菜单逻辑
+main_menu
