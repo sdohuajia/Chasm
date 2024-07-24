@@ -3,6 +3,7 @@
 # 系统更新和 Docker 安装
 echo "正在更新系统..."
 sudo apt-get update
+
 # 检查是否已安装 Docker
 if ! command -v docker &> /dev/null; then
     echo "正在安装 Docker..."
@@ -54,7 +55,7 @@ SCOUT_UID=$SCOUT_UID
 WEBHOOK_API_KEY=$WEBHOOK_API_KEY
 # Scout Webhook Url, update based on your server's IP and Port
 # e.g. http://$ip:$PORT/
-WEBHOOK_URL=http://$ip:$PORT/
+WEBHOOK_URL=$WEBHOOK_URL
 # Chosen Provider (groq, openai)
 PROVIDERS=groq
 MODEL=gemma2-9b-it
@@ -134,10 +135,18 @@ function restart_node() {
 function upgrade_to_version() {
     VERSION="0.0.4"
     echo "正在升级到版本 $VERSION ..."
+
+    # 提示用户输入端口号
+    read -p "请输入端口号（默认为3001）：" PORT
+    PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
+    
+    # 设置 WEBHOOK_URL
+    WEBHOOK_URL="http://$ip:$PORT/"
+    
     docker stop scout
     docker rm scout
     docker pull johnsonchasm/chasm-scout:$VERSION
-    docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout:$VERSION
+    docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout:$VERSION
     echo "节点已成功升级到版本 $VERSION 。"
 }
 
@@ -172,6 +181,9 @@ function install_multiple_nodes() {
             exit 1
         }
 
+        # 设置 WEBHOOK_URL
+        WEBHOOK_URL="http://$ip:$PORT/"
+
         tee .env > /dev/null <<EOF
 PORT=$PORT
 LOGGER_LEVEL=debug
@@ -182,7 +194,7 @@ SCOUT_UID=$SCOUT_UID
 WEBHOOK_API_KEY=$WEBHOOK_API_KEY
 # Scout Webhook Url, update based on your server's IP and Port
 # e.g. http://$ip:$PORT/
-WEBHOOK_URL=http://$ip:$PORT/
+WEBHOOK_URL=$WEBHOOK_URL
 # Chosen Provider (groq, openai)
 PROVIDERS=groq
 MODEL=gemma2-9b-it
