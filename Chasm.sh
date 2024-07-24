@@ -214,7 +214,27 @@ EOF
     echo "所有节点安装完成。"
 }
 
-# 主菜单
+# 定义脚本更新函数
+function update_script() {
+    echo "正在更新 Chasm Scout 版本..."
+
+    # 更新 Docker 镜像版本到 0.0.4
+    if docker pull johnsonchasm/chasm-scout:0.0.4; then
+        docker stop scout  # 停止当前运行的容器
+        docker rm scout    # 删除旧的容器实例
+
+        # 使用新版本的 Docker 镜像重新运行容器
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout:0.0.4
+        
+        echo "Chasm Scout 版本更新完成。"
+    else
+        echo "更新 Chasm Scout 版本失败，请检查网络或稍后重试。"
+    fi
+
+    # 可能还需要执行其他更新步骤，例如更新 .env 文件等
+}
+
+
 function main_menu() {
     while true; do
         clear
@@ -232,21 +252,21 @@ function main_menu() {
         echo "4. 查看 Scout 日志"
         echo "5. 重启节点"
         echo "6. 多开节点（谨慎使用）"
-        read -p "请输入选项（1-6）: " OPTION
+        echo "7. 脚本更新"
+        read -p "请输入选项（1-7）: " OPTION
 
         case $OPTION in
-        1) install_node ;;
-        2) send_webhook_request ;;
-        3) test_server_response ;;
-        4) view_scout_logs ;;
-        5) restart_node ;;
-        6) install_multiple_nodes ;;
-        *) echo "无效选项，请重新输入。" ;;
+            1) install_node ;;
+            2) send_webhook_request ;;
+            3) test_server_response ;;
+            4) view_scout_logs ;;
+            5) restart_node ;;
+            6) install_multiple_nodes ;;
+            7) update_script ;;
+            *) echo "无效选项，请重新输入。" ;;
         esac
         echo "按任意键返回主菜单..."
         read -n 1
     done
 }
 
-# 显示主菜单
-main_menu
