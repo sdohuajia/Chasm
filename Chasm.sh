@@ -138,24 +138,6 @@ function restart_node() {
     fi
 }
 
-# 升级到指定版本函数
-function upgrade_to_version() {
-    VERSION="0.0.4"
-    echo "正在升级到版本 $VERSION ..."
-
-    # 提示用户输入端口号
-    read -p "请输入端口号（默认为3001）：" PORT
-    PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
-    
-    # 设置 WEBHOOK_URL
-    WEBHOOK_URL="http://$ip:$PORT/"
-    
-    # 切换到 scout 目录
-    cd ~/scout || {
-        echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
-        exit 1
-    }
-
     # 检查是否存在 .env 文件，如果不存在则创建
     if [ ! -f .env ]; then
         echo "PORT=$PORT" > .env
