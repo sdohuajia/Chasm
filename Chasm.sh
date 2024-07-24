@@ -30,6 +30,9 @@ function install_node() {
     read -p "请输入端口号（默认为3001）：" PORT
     PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
     
+    # 设置 WEBHOOK_URL
+    WEBHOOK_URL="http://$ip:$PORT/"
+    
     # 创建 scout 目录（如果不存在）
     mkdir -p ~/scout
     
