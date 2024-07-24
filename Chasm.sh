@@ -12,8 +12,45 @@ else
     echo "Docker 已安装，跳过安装步骤。"
 fi
 
-# 定义安装节点的函数
+# 主菜单函数
+function main_menu() {
+    while true; do
+        clear
+        echo "脚本由大赌社区哈哈哈哈编写，推特 @ferdie_jhovie，免费开源，请勿相信收费"
+        echo "特别鸣谢 Silent ⚛| validator"
+        echo "================================================================"
+        echo "节点社区 Telegram 群组:https://t.me/niuwuriji"
+        echo "节点社区 Telegram 频道:https://t.me/niuwuriji"
+        echo "节点社区 Discord 社群:https://discord.gg/GbMV5EcNWF"
+        echo "退出脚本，请按键盘ctrl c退出即可"
+        echo "请选择要执行的操作:"
+        echo "1. 安装节点"
+        echo "2. 测试LLM"
+        echo "3. 查看 Scout 日志"
+        echo "4. 重启节点"
+        echo "5. 升级到指定版本（0.0.4）"
+        echo "6. 多开节点（谨慎使用）"
+        read -p "请输入选项（1-6）: " OPTION
+
+        case $OPTION in
+        1) install_node ;;
+        2) send_webhook_request ;;
+        3) view_scout_logs ;;
+        4) restart_node ;;
+        5) upgrade_to_version ;;
+        6) install_multiple_nodes ;;
+        *) echo "无效选项，请重新输入。" ;;
+        esac
+
+        echo "按任意键返回主菜单..."
+        read -n 1
+    done
+}
+
+# 安装节点函数
 function install_node() {
+    echo "正在安装节点..."
+
     # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
     echo "请输入 SCOUT_UID：(第一次填写后可不填)"
     read SCOUT_UID
@@ -116,7 +153,6 @@ function view_scout_logs() {
     fi
 }
 
-
 # 重启节点函数
 function restart_node() {
     # 切换到 scout 目录
@@ -130,7 +166,7 @@ function restart_node() {
     docker rm scout
     # 拉取 Docker 镜像并重新运行
     if docker pull johnsonchasm/chasm-scout; then
-        docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout
         echo "节点已成功重启。"
     else
         echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
@@ -138,6 +174,21 @@ function restart_node() {
     fi
 }
 
+# 升级到指定版本函数
+function upgrade_to_version() {
+    echo "升级到指定版本..."
+    read -p "请输入要升级的版本号（例如 0.0.4）: " VERSION
+    
+    # 提示用户输入端口号
+    read -p "请输入端口号（默认为3001）：" PORT
+    PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
+    
+    # 获取当前系统的公网 IP 地址
+    ip=$(curl -s4 ifconfig.me/ip)
+    
+    # 设置 WEBHOOK_URL
+    WEBHOOK_URL="http://$ip:$PORT/"
+    
     # 检查是否存在 .env 文件，如果不存在则创建
     if [ ! -f .env ]; then
         echo "PORT=$PORT" > .env
@@ -153,7 +204,6 @@ function restart_node() {
     docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout:$VERSION
     echo "节点已成功升级到版本 $VERSION 。"
 }
-
 
 # 安装多个节点函数
 function install_multiple_nodes() {
@@ -221,67 +271,6 @@ EOF
 
         echo "节点 node$i 安装完成。"
         cd ~/scout  # 返回到 scout 目录，确保下一个节点创建在正确的目录下
-    done
-}
-
-# 升级到指定版本函数
-function upgrade_to_version() {
-    echo "正在升级到版本 0.0.4 ..."
-
-    # 检查是否存在 .env 文件，如果不存在则创建
-    if [ ! -f .env ]; then
-        echo "PORT=3001" > .env
-    fi
-
-    # 获取当前端口号和 WEBHOOK_URL
-    source ./.env
-
-    # 停止和删除旧的 Docker 容器
-    docker stop scout
-    docker rm scout
-
-    # 拉取 Docker 镜像并重新运行
-    if docker pull chasmtech/chasm-scout:0.0.4; then
-        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout chasmtech/chasm-scout:0.0.4
-        echo "节点已成功升级到版本 0.0.4 。"
-    else
-        echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
-        exit 1
-    fi
-}
-
-# 主菜单函数
-function main_menu() {
-    while true; do
-        clear
-        echo "脚本由大赌社区哈哈哈哈编写，推特 @ferdie_jhovie，免费开源，请勿相信收费"
-        echo "特别鸣谢 Silent ⚛| validator"
-        echo "================================================================"
-        echo "节点社区 Telegram 群组:https://t.me/niuwuriji"
-        echo "节点社区 Telegram 频道:https://t.me/niuwuriji"
-        echo "节点社区 Discord 社群:https://discord.gg/GbMV5EcNWF"
-        echo "退出脚本，请按键盘ctrl c退出即可"
-        echo "请选择要执行的操作:"
-        echo "1. 安装节点"
-        echo "2. 测试LLM"
-        echo "3. 查看 Scout 日志"
-        echo "4. 重启节点"
-        echo "5. 升级到指定版本（0.0.4）"
-        echo "6. 多开节点（谨慎使用）"
-        read -p "请输入选项（1-6）: " OPTION
-
-        case $OPTION in
-        1) install_node ;;
-        2) send_webhook_request ;;
-        3) view_scout_logs ;;
-        4) restart_node ;;
-        5) upgrade_to_version ;;
-        6) install_multiple_nodes ;;
-        *) echo "无效选项，请重新输入。" ;;
-        esac
-
-        echo "按任意键返回主菜单..."
-        read -n 1
     done
 }
 
