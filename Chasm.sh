@@ -91,10 +91,12 @@ EOF
 
 # 发送 POST 请求到 webhook 的函数
 function send_webhook_request() {
-    source ./.env
-    # 使用 curl 发送 POST 请求到 webhook
     cd ~/scout || {
         echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
+        exit 1
+    }
+    source ./.env || {
+        echo "加载 .env 文件失败。请确保文件存在并包含正确的配置。"
         exit 1
     }
     curl -X POST \
