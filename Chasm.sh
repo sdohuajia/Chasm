@@ -207,6 +207,27 @@ EOF
     done
 }
 
+# 测试服务器响应函数
+function test_server_response() {
+    echo "测试服务器响应..."
+    
+    # 默认端口号设置为3001
+    PORT=3001
+    
+    # 如果存在 .env 文件，则从中读取端口号设置
+    if [ -f ~/.env ]; then
+        PORT=$(grep "^PORT=" ~/.env | cut -d'=' -f2)
+        if [ -z "$PORT" ]; then
+            PORT=3001  # 如果未找到端口号设置，默认为3001
+        fi
+    fi
+    
+    curl localhost:$PORT
+    echo  # 打印一个空行作为分隔
+}
+
+
+
 # 主菜单函数
 function main_menu() {
     while true; do
@@ -223,15 +244,17 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        echo "5. 多开节点（谨慎使用）"
-        read -p "请输入选项（1-5）: " OPTION
+        echo "5. 测试服务器响应"
+        echo "6. 多开节点（谨慎使用）"
+        read -p "请输入选项（1-6）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
         3) view_scout_logs ;;
         4) restart_node ;;
-        5) install_multiple_nodes ;;
+        5) test_server_response ;;
+        6) install_multiple_nodes ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
 
