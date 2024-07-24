@@ -258,7 +258,7 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        echo "5. 升级到指定版本（0.0.4）"
+        echo "5. 升级到指定版本（0.0.4）暂不可用"
         echo "6. 多开节点（谨慎使用）"
         read -p "请输入选项（1-6）: " OPTION
 
