@@ -224,6 +224,32 @@ EOF
     done
 }
 
+# 升级到指定版本函数
+function upgrade_to_version() {
+    echo "正在升级到版本 0.0.4 ..."
+
+    # 检查是否存在 .env 文件，如果不存在则创建
+    if [ ! -f .env ]; then
+        echo "PORT=3001" > .env
+    fi
+
+    # 获取当前端口号和 WEBHOOK_URL
+    source ./.env
+
+    # 停止和删除旧的 Docker 容器
+    docker stop scout
+    docker rm scout
+
+    # 拉取 Docker 镜像并重新运行
+    if docker pull chasmtech/chasm-scout:0.0.4; then
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout chasmtech/chasm-scout:0.0.4
+        echo "节点已成功升级到版本 0.0.4 。"
+    else
+        echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
+        exit 1
+    fi
+}
+
 # 主菜单函数
 function main_menu() {
     while true; do
@@ -240,7 +266,7 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        echo "5. 升级到指定版本（0.0.4）暂不可用"
+        echo "5. 升级到指定版本（0.0.4）"
         echo "6. 多开节点（谨慎使用）"
         read -p "请输入选项（1-6）: " OPTION
 
