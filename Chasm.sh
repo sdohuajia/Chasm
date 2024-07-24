@@ -109,8 +109,13 @@ function send_webhook_request() {
 # 查看 scout 日志函数
 function view_scout_logs() {
     echo "查看 scout 容器日志..."
-    docker logs scout -f --tail 100
+    if docker ps -a | grep -q "scout"; then
+        docker logs scout -f --tail 100
+    else
+        echo "错误: 容器 'scout' 不存在或已被删除。"
+    fi
 }
+
 
 # 重启节点函数
 function restart_node() {
