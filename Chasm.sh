@@ -176,9 +176,10 @@ function restart_node() {
 
 # 升级到指定版本函数
 function upgrade_to_version() {
-    echo "升级到指定版本..."
-    read -p "请输入要升级的版本号（例如 0.0.4）: " VERSION
-    
+    VERSION="0.0.4"  # 预定义要升级的版本号
+
+    echo "升级到版本 $VERSION ..."
+
     # 提示用户输入端口号
     read -p "请输入端口号（默认为3001）：" PORT
     PORT=${PORT:-3001}  # 如果用户没有输入，则使用默认值3001
@@ -198,12 +199,21 @@ function upgrade_to_version() {
         sed -i "s|^WEBHOOK_URL=.*|WEBHOOK_URL=$WEBHOOK_URL|" .env
     fi
 
+    # 停止和删除旧的 Docker 容器
+    echo "停止和删除旧的 Docker 容器..."
     docker stop scout
     docker rm scout
-    docker pull johnsonchasm/chasm-scout:$VERSION
-    docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout:$VERSION
-    echo "节点已成功升级到版本 $VERSION 。"
+
+    # 拉取 Docker 镜像并运行新容器
+    if docker pull chasmtech/chasm-scout:$VERSION; then
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout chasmtech/chasm-scout:$VERSION
+        echo "节点已成功升级到版本 $VERSION 。"
+    else
+        echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
+        exit 1
+    fi
 }
+
 
 # 安装多个节点函数
 function install_multiple_nodes() {
