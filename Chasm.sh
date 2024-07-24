@@ -127,6 +127,17 @@ function restart_node() {
     fi
 }
 
+# 升级到指定版本函数
+function upgrade_to_version() {
+    VERSION="0.0.4"
+    echo "正在升级到版本 $VERSION ..."
+    docker stop scout
+    docker rm scout
+    docker pull johnsonchasm/chasm-scout:$VERSION
+    docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout:$VERSION
+    echo "节点已成功升级到版本 $VERSION 。"
+}
+
 # 安装多个节点函数
 function install_multiple_nodes() {
     echo "多开节点（谨慎使用）"
@@ -209,15 +220,17 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        echo "5. 多开节点（谨慎使用）"
-        read -p "请输入选项（1-5）: " OPTION
+        echo "5. 升级版本（0.0.4）"
+        echo "6. 多开节点（谨慎使用）"
+        read -p "请输入选项（1-6）: " OPTION
 
         case $OPTION in
         1) install_node ;;
         2) send_webhook_request ;;
         3) view_scout_logs ;;
         4) restart_node ;;
-        5) install_multiple_nodes ;;
+        5) upgrade_to_version ;;
+        6) install_multiple_nodes ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
 
