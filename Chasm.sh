@@ -153,8 +153,8 @@ function install_multiple_nodes() {
 
     ip=$(curl -s4 ifconfig.me/ip)
 
-    read -p "请输入起始端口号（默认为3001）：" START_PORT
-    START_PORT=${START_PORT:-3001}
+    read -p "请输入起始端口号（默认为3002）：" START_PORT
+    START_PORT=${START_PORT:-3002}
 
     read -p "请输入要安装的节点数量（默认为1）：" NODE_COUNT
     NODE_COUNT=${NODE_COUNT:-1}
@@ -220,7 +220,7 @@ function main_menu() {
         echo "2. 测试LLM"
         echo "3. 查看 Scout 日志"
         echo "4. 重启节点"
-        echo "5. 升级版本（0.0.4）"
+        echo "5. 升级到指定版本（0.0.4）"
         echo "6. 多开节点（谨慎使用）"
         read -p "请输入选项（1-6）: " OPTION
 
