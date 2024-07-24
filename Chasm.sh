@@ -143,12 +143,28 @@ function upgrade_to_version() {
     # 设置 WEBHOOK_URL
     WEBHOOK_URL="http://$ip:$PORT/"
     
+    # 切换到 scout 目录
+    cd ~/scout || {
+        echo "切换到 scout 目录失败。请检查目录是否存在或权限设置。"
+        exit 1
+    }
+
+    # 检查是否存在 .env 文件，如果不存在则创建
+    if [ ! -f .env ]; then
+        echo "PORT=$PORT" > .env
+    else
+        # 更新端口号和 WEBHOOK_URL
+        sed -i "s/^PORT=.*/PORT=$PORT/" .env
+        sed -i "s|^WEBHOOK_URL=.*|WEBHOOK_URL=$WEBHOOK_URL|" .env
+    fi
+
     docker stop scout
     docker rm scout
     docker pull johnsonchasm/chasm-scout:$VERSION
     docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout:$VERSION
     echo "节点已成功升级到版本 $VERSION 。"
 }
+
 
 # 安装多个节点函数
 function install_multiple_nodes() {
