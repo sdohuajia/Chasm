@@ -161,7 +161,16 @@ function install_multiple_nodes() {
 
     for ((i = 1; i <= NODE_COUNT; i++)); do
         PORT=$((START_PORT + i - 1))
-        NODE_DIR=~/scout/node$i
+        NODE_NAME="node$i"
+        NODE_DIR=~/scout/$NODE_NAME
+
+        # 检查目录是否存在，如果存在，则在节点名称后添加递增的数字
+        count=1
+        while [ -d "$NODE_DIR" ]; do
+            NODE_NAME="node${i}_${count}"
+            NODE_DIR=~/scout/$NODE_NAME
+            ((count++))
+        done
 
         mkdir -p $NODE_DIR
         cd $NODE_DIR || {
@@ -189,20 +198,20 @@ MODEL=gemma2-9b-it
 GROQ_API_KEY=$GROQ_API_KEY
 EOF
 
-        echo "Contents of .env file for node$i:"
+        echo "Contents of .env file for $NODE_NAME:"
         cat .env
 
         sudo ufw allow $PORT
         sudo ufw allow $PORT/tcp
 
         if docker pull johnsonchasm/chasm-scout; then
-            docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout_node$i johnsonchasm/chasm-scout
+            docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout_$NODE_NAME johnsonchasm/chasm-scout
         else
             echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
             exit 1
         fi
 
-        echo "节点 node$i 安装完成。"
+        echo "节点 $NODE_NAME 安装完成。"
         cd ~/scout  # 返回到 scout 目录，确保下一个节点创建在正确的目录下
     done
 }
