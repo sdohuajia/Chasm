@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 自动更新脚本
+echo "正在检查脚本更新..."
+git pull origin main
+echo "脚本已更新到最新版本。"
+
 # 系统更新和 Docker 安装
 echo "正在更新系统..."
 sudo apt-get update
