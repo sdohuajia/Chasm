@@ -126,7 +126,6 @@ function view_scout_logs() {
     fi
 }
 
-
 # 重启节点函数
 function restart_node() {
     # 切换到 scout 目录
@@ -234,8 +233,8 @@ function test_server_response() {
     PORT=3001
     
     # 如果存在 .env 文件，则从中读取端口号设置
-    if [ -f ~/.env ]; then
-        PORT=$(grep "^PORT=" ~/.env | cut -d'=' -f2)
+    if [ -f ~/.scout/.env ]; then
+        PORT=$(grep "^PORT=" ~/.scout/.env | cut -d'=' -f2)
         if [ -z "$PORT" ]; then
             PORT=3001  # 如果未找到端口号设置，默认为3001
         fi
@@ -256,14 +255,14 @@ function update_scout_container() {
     docker rm scout
     
     # 拉取最新的 Docker 镜像
-    docker pull chasmtech/chasm-scout:latest
+    docker pull johnsonchasm/chasm-scout:latest
     
     # 从 .env 文件中获取端口号
-    PORT=$(grep "^PORT=" ~/.scout/.env | cut -d'=' -f2)
+    PORT=$(grep "^PORT=" ~/scout/.env | cut -d'=' -f2)
     PORT=${PORT:-3001}  # 默认端口号3001
     
     # 运行更新后的 Scout 容器
-    docker run -d --restart=always --env-file ~/.scout/.env -p $PORT:$PORT --name scout chasmtech/chasm-scout
+    docker run -d --restart=always --env-file ~/scout/.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout
     
     echo "Scout 容器已成功更新。"
 }
@@ -286,7 +285,7 @@ function main_menu() {
         echo "4. 重启节点"
         echo "5. 测试服务器响应"
         echo "6. 多开节点（谨慎使用）"
-        echo "7. 更新脚本（0.0.5）"
+        echo "7. 更新 Scout 容器"
         read -p "请输入选项（1-7）: " OPTION
 
         case $OPTION in
@@ -296,7 +295,7 @@ function main_menu() {
         4) restart_node ;;
         5) test_server_response ;;
         6) install_multiple_nodes ;;
-        7) update_scout ;;
+        7) update_scout_container ;;
         *) echo "无效选项，请重新输入。" ;;
         esac
 
