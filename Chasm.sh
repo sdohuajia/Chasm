@@ -85,8 +85,8 @@ EOF
     sudo ufw allow $PORT/tcp
 
     # 拉取 Docker 镜像并运行
-    if docker pull johnsonchasm/chasm-scout; then
-        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout
+    if docker pull chasmtech/chasm-scout; then
+        docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout chasmtech/chasm-scout
     else
         echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
         exit 1
@@ -138,8 +138,8 @@ function restart_node() {
     docker stop scout
     docker rm scout
     # 拉取 Docker 镜像并重新运行
-    if docker pull johnsonchasm/chasm-scout; then
-        docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout johnsonchasm/chasm-scout
+    if docker pull chasmtech/chasm-scout; then
+        docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout chasmtech/chasm-scout
         echo "节点已成功重启。"
     else
         echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
@@ -213,8 +213,8 @@ EOF
         sudo ufw allow $PORT
         sudo ufw allow $PORT/tcp
 
-        if docker pull johnsonchasm/chasm-scout; then
-            docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout_$NODE_NAME johnsonchasm/chasm-scout
+        if docker pull chasmtech/chasm-scout; then
+            docker run -d --restart=always --env-file ./.env -p $PORT:$PORT --name scout_$NODE_NAME chasmtech/chasm-scout
         else
             echo "拉取 Docker 镜像失败，请检查网络或稍后重试。"
             exit 1
@@ -255,14 +255,14 @@ function update_scout_container() {
     docker rm scout
     
     # 拉取最新的 Docker 镜像
-    docker pull johnsonchasm/chasm-scout:latest
+    docker pull chasmtech/chasm-scout:latest
     
     # 从 .env 文件中获取端口号
     PORT=$(grep "^PORT=" ~/scout/.env | cut -d'=' -f2)
     PORT=${PORT:-3001}  # 默认端口号3001
     
     # 运行更新后的 Scout 容器
-    docker run -d --restart=always --env-file ~/scout/.env -p $PORT:$PORT --name scout johnsonchasm/chasm-scout
+    docker run -d --restart=always --env-file ~/scout/.env -p $PORT:$PORT --name scout chasmtech/chasm-scout
     
     echo "Scout 容器已成功更新。"
 }
