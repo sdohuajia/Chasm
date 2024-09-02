@@ -10,11 +10,13 @@ fi
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Chasm.sh"
 
-# 系统更新和 Docker 安装
-echo "正在更新系统..."
-sudo apt-get update
+# 定义安装节点的函数
+function install_node() {
+    # 系统更新和 Docker 安装
+    echo "正在更新系统..."
+    sudo apt-get update
 
-# 检查是否已安装 Docker
+    # 检查是否已安装 Docker
 if ! command -v docker &> /dev/null; then
     echo "正在安装 Docker..."
     sudo apt-get install docker.io
@@ -22,8 +24,6 @@ else
     echo "Docker 已安装，跳过安装步骤。"
 fi
 
-# 定义安装节点的函数
-function install_node() {
     # 询问用户输入 SCOUT_UID、WEBHOOK_API_KEY 和 GROQ_API_KEY
     echo "请输入 SCOUT_UID：(第一次填写后可不填)"
     read SCOUT_UID
